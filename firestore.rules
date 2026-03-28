@@ -1,48 +1,6 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // ===============================================================
-    // Assumed Data Model
-    // ===============================================================
-    //
-    // Collection: users
-    // Document ID: userId (UID)
-    // Fields:
-    //   - githubToken: string (optional) - GitHub OAuth token
-    //   - updatedAt: string (optional) - ISO 8601 timestamp
-    //
-    // Collection: users/{userId}/productionEntries
-    // Document ID: auto-generated
-    // Fields:
-    //   - date: string (required) - YYYY-MM-DD
-    //   - shift: string (required) - 'day' or 'night'
-    //   - machineId: string (required)
-    //   - karigarName: string (required)
-    //   - designName: string (required)
-    //   - designTich: number (required)
-    //   - frame: number (required)
-    //   - createdAt: timestamp (required)
-    //
-    // Collection: users/{userId}/karigars
-    // Document ID: auto-generated
-    // Fields:
-    //   - name: string (required)
-    //   - id: string (required)
-    //
-    // Collection: users/{userId}/machines
-    // Document ID: machineId
-    // Fields:
-    //   - id: string (required)
-    //   - model: number (required)
-    //   - capacityUnitsPerHour: number (required)
-    //   - status: string (required)
-    //   - currentDesign: string (optional)
-    //
-    // ===============================================================
-
-    // ===============================================================
-    // Helper Functions
-    // ===============================================================
     
     function isAuthenticated() {
       return request.auth != null;
@@ -59,71 +17,9 @@ service cloud.firestore {
          request.auth.token.get('email', '') == "vipul.siddhapura90@gmail.com");
     }
 
-    function isValidUser(data) {
-      return data.keys().hasOnly(['githubToken', 'updatedAt', 'role']) &&
-             (!('githubToken' in data) || data.githubToken is string) &&
-             (!('updatedAt' in data) || data.updatedAt is string) &&
-             (!('role' in data) || data.role in ['admin', 'user']);
-    }
-
-    function isValidProductionEntry(data) {
-      return data.keys().hasAll(['date', 'shift', 'machineId', 'karigarName', 'designName', 'designTich', 'frame', 'createdAt']) &&
-             data.date is string &&
-             data.shift in ['day', 'night'] &&
-             data.machineId is string &&
-             data.karigarName is string &&
-             data.designName is string &&
-             data.designTich is number &&
-             data.frame is number &&
-             data.createdAt is timestamp;
-    }
-
-    function isValidKarigar(data) {
-      return data.keys().hasAll(['name', 'id']) &&
-             data.name is string &&
-             data.id is string;
-    }
-
-    function isValidMachine(data) {
-      return data.keys().hasAll(['id', 'model', 'capacityUnitsPerHour', 'status']) &&
-             data.id is string &&
-             data.model is number &&
-             data.capacityUnitsPerHour is number &&
-             data.status is string;
-    }
-
-    // ===============================================================
-    // Rules
-    // ===============================================================
-
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
-      allow create: if isOwner(userId) && isValidUser(request.resource.data);
-      allow update: if (isOwner(userId) && isValidUser(request.resource.data)) || isAdmin();
-      allow delete: if isAdmin();
-
-      match /productionEntries/{entryId} {
-        allow read: if isOwner(userId) || isAdmin();
-        allow create: if isOwner(userId) && isValidProductionEntry(request.resource.data);
-        allow update: if (isOwner(userId) && isValidProductionEntry(request.resource.data)) || isAdmin();
-        allow delete: if isOwner(userId) || isAdmin();
-      }
-
-      match /karigars/{karigarId} {
-        allow read: if isOwner(userId) || isAdmin();
-        allow create: if isOwner(userId) && isValidKarigar(request.resource.data);
-        allow update: if (isOwner(userId) && isValidKarigar(request.resource.data)) || isAdmin();
-        allow delete: if isOwner(userId) || isAdmin();
-      }
-
-      match /machines/{machineId} {
-        allow read: if isOwner(userId) || isAdmin();
-        allow create: if isOwner(userId) && isValidMachine(request.resource.data);
-        allow update: if (isOwner(userId) && isValidMachine(request.resource.data)) || isAdmin();
-        allow delete: if isOwner(userId) || isAdmin();
-      }
-
-      // Catch-all for any other subcollections
+      allow read, write: if isOwner(userId) || isAdmin();
+      
       match /{allPaths=**} {
         allow read, write: if isOwner(userId) || isAdmin();
       }

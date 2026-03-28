@@ -111,10 +111,11 @@ export function MachinesProvider({ children }: { children: ReactNode }) {
     if (!firestore || !user) return;
     const userEntriesColRef = collection(firestore, 'users', user.uid, 'productionEntries');
     const newEntryId = doc(userEntriesColRef).id;
-    const newEntry: ProductionEntry = {
+    const newEntry = {
       ...entryData,
       id: newEntryId,
       date: format(entryData.date, 'yyyy-MM-dd'),
+      createdAt: new Date(),
     };
     const docRef = doc(userEntriesColRef, newEntryId);
     setDocumentNonBlocking(docRef, newEntry, {});
