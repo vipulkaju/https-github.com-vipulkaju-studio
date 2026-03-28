@@ -1,0 +1,16 @@
+{
+  "name": "ProductionTrack",
+  "short_name": "ProductionTrack",
+  "description": "AI-powered production tracking and insights.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F5",
+  "theme_color": "#ca8a04",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

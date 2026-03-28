@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 20 14.3% 95.9%;
+    --foreground: 224 71.4% 4.1%;
+
+    --card: 0 0% 100% / 0.5;
+    --card-foreground: 224 71.4% 4.1%;
+
+    --popover: 0 0% 100% / 0.75;
+    --popover-foreground: 224 71.4% 4.1%;
+
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 224 71.4% 4.1%;
+
+    --muted: 220 13% 91%;
+    --muted-foreground: 220 8.9% 46.1%;
+
+    --accent: 220 13% 88%;
+    --accent-foreground: 224 71.4% 4.1%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 0% / 0.1;
+    --input: 0 0% 0% / 0.1;
+    --ring: 24.6 95% 53.1%;
+    
+    --radius: 2rem;
+    
+    --chart-1: 24.6 95% 53.1%;
+    --chart-2: 34.9 91.5% 66.1%;
+
+    --sidebar-background: 0 0% 100% / 0.2;
+    --sidebar-foreground: 224 71.4% 4.1%;
+    --sidebar-primary: 24.6 95% 53.1%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 13% 88% / 0.4;
+    --sidebar-accent-foreground: 224 71.4% 4.1%;
+    --sidebar-border: 255 255% 255% / 0.3;
+    --sidebar-ring: 24.6 95% 53.1%;
+  }
+
+  :root[data-theme='fanta'] {
+    --primary: 24.6 95% 53.1%;
+  }
+  :root[data-theme='red'] {
+    --primary: 0 84.2% 60.2%;
+  }
+  :root[data-theme='yellow'] {
+    --primary: 47.9 95.8% 53.1%;
+  }
+  :root[data-theme='blue'] {
+    --primary: 221.2 83.2% 53.3%;
+  }
+  :root[data-theme='green'] {
+    --primary: 142.1 76.2% 36.3%;
+  }
+  :root[data-theme='violet'] {
+    --primary: 262.1 83.3% 57.8%;
+  }
+  :root[data-theme='purple'] {
+    --primary: 270 95% 53.1%;
+  }
+  :root[data-theme='gold'] {
+    --primary: 45 95% 53.1%;
+  }
+  :root[data-theme='pink'] {
+    --primary: 340.9 95.8% 68.4%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(var(--primary), 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(var(--primary), 0.04) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(var(--primary), 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(var(--primary), 0.03) 0px, transparent 50%),
+      linear-gradient(to bottom right, #ffffff, #fcfcfc);
+    background-size: 100% 100%;
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .liquid-glass {
+    @apply bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.05)];
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-glass::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  .glass-card {
+    @apply bg-white/50 backdrop-blur-xl border border-white/60 shadow-lg rounded-[2.5rem] transition-all duration-300;
+  }
+  
+  .glass-card:hover {
+    @apply bg-white/70 shadow-2xl -translate-y-1 border-white/80;
+  }
+
+  .glass-input {
+    @apply bg-white/30 backdrop-blur-md border border-white/50 rounded-2xl px-4 py-2 focus:bg-white/60 focus:border-primary/50 transition-all outline-none shadow-inner;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .text-glow {
+    text-shadow: 0 0 15px rgba(var(--primary), 0.5);
+  }
+}
+
+
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+    background-image: none !important;
+  }
+  
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-card, .print-card-container {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    background: white !important;
+  }
+
+  .print-card *, .print-card-container * {
+    color: black !important;
+    background-color: transparent !important;
+  }
+  
+  @page {
+    size: A4;
+    margin: 20mm;
+  }
+}

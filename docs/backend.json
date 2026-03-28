@@ -1,0 +1,91 @@
+{
+  "entities": {
+    "Machine": {
+      "title": "Machine",
+      "type": "object",
+      "description": "Represents a physical machine used in the production process.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the machine."
+        },
+        "model": {
+          "type": "number",
+          "description": "The model number of the machine."
+        },
+        "capacityUnitsPerHour": {
+          "type": "number",
+          "description": "The production capacity of the machine in units per hour."
+        },
+        "status": {
+          "type": "string",
+          "description": "Current operational status of the machine.",
+          "enum": ["running", "idle", "fault"]
+        }
+      },
+      "required": ["id", "model", "capacityUnitsPerHour", "status"]
+    },
+    "Karigar": {
+      "title": "Karigar",
+      "type": "object",
+      "description": "Represents a worker or artisan.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the karigar."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the karigar."
+        }
+      },
+      "required": ["id", "name"]
+    },
+    "ProductionEntry": {
+      "title": "ProductionEntry",
+      "type": "object",
+      "description": "Represents a single production entry for a shift.",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "shift": { "type": "string", "enum": ["day", "night"] },
+        "machineId": { "type": "string" },
+        "karigarName": { "type": "string" },
+        "designName": { "type": "string" },
+        "designTich": { "type": "number" },
+        "totalTich": { "type": "number" },
+        "frame": { "type": "number" },
+        "totalMeter": { "type": "number" }
+      },
+      "required": [
+        "id",
+        "date",
+        "shift",
+        "machineId",
+        "karigarName",
+        "designName",
+        "designTich",
+        "totalTich",
+        "frame",
+        "totalMeter"
+      ]
+    }
+  },
+  "auth": {
+    "providers": ["email"]
+  },
+  "firestore": {
+    "/users/{userId}/machines/{machineId}": {
+      "schema": { "$ref": "#/backend/entities/Machine" },
+      "description": "Stores machine documents for a specific user."
+    },
+    "/users/{userId}/karigars/{karigarId}": {
+      "schema": { "$ref": "#/backend/entities/Karigar" },
+      "description": "Stores karigar (worker) documents for a specific user."
+    },
+    "/users/{userId}/productionEntries/{productionEntryId}": {
+      "schema": { "$ref": "#/backend/entities/ProductionEntry" },
+      "description": "Stores production entry documents for a specific user."
+    }
+  }
+}
