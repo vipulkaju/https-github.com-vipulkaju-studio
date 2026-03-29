@@ -3,11 +3,33 @@ import { cn } from '@/lib/utils';
 const SewingMachineIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
+    viewBox="0 0 100 100"
+    fill="none"
     {...props}
   >
-    <path d="M19.3,7.2H17.2V5.1c0-0.6-0.4-1-1-1H7.7c-0.6,0-1,0.4-1,1v5H3.1c-0.6,0-1,0.4-1,1v4.1c0,0.6,0.4,1,1,1h1.1v2.1c0,0.6,0.4,1,1,1h11.7c0.6,0,1-0.4,1-1v-2.1h1.1c0.6,0,1-0.4,1-1V8.2C20.3,7.6,19.9,7.2,19.3,7.2z M10.8,9.1c-0.6,0-1-0.4-1-1s0.4-1,1-1s1,0.4,1,1S11.4,9.1,10.8,9.1z M15.2,10.1v2.1H8.7v-2.1H15.2z"/>
+    {/* Body */}
+    <path d="M20 35h60v40H20V35z" fill="#FF5252"/>
+    <path d="M20 35v20h25V35H20z" fill="#FF5252"/>
+    
+    {/* Base */}
+    <rect x="15" y="70" width="70" height="15" rx="2" fill="#FFD740"/>
+    <rect x="20" y="85" width="60" height="5" fill="#FF5252"/>
+    
+    {/* Needle */}
+    <rect x="22" y="55" width="4" height="10" fill="#3F51B5"/>
+    <rect x="23" y="65" width="2" height="5" fill="#3F51B5"/>
+    
+    {/* Spools */}
+    <rect x="55" y="20" width="10" height="15" fill="#4DB6AC"/>
+    <rect x="70" y="20" width="10" height="15" fill="#BA68C8"/>
+    <path d="M60 20v15M75 20v15" stroke="#FBC02D" strokeWidth="2"/>
+    
+    {/* Knobs */}
+    <circle cx="70" cy="45" r="5" fill="#7E57C2"/>
+    <circle cx="70" cy="60" r="5" fill="#FBC02D"/>
+    
+    {/* Detail */}
+    <rect x="20" y="40" width="10" height="5" fill="#4DB6AC"/>
   </svg>
 );
 
@@ -15,8 +37,8 @@ const SewingMachineIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export function Logo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-3 text-xl font-black tracking-tight", className)}>
-      <div className="flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20 border border-white/20">
-        <SewingMachineIcon className="h-6 w-6" />
+      <div className="flex size-10 items-center justify-center rounded-2xl bg-white shadow-lg border border-white/20 overflow-hidden">
+        <SewingMachineIcon className="h-8 w-8" />
       </div>
       <span className="font-headline bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">ProductionTrack</span>
     </div>

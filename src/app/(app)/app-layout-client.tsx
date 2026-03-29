@@ -45,11 +45,17 @@ import { Button } from '@/components/ui/button';
 const SewingMachineIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
+    viewBox="0 0 100 100"
     fill="currentColor"
     {...props}
   >
-    <path d="M19.3,7.2H17.2V5.1c0-0.6-0.4-1-1-1H7.7c-0.6,0-1,0.4-1,1v5H3.1c-0.6,0-1,0.4-1,1v4.1c0,0.6,0.4,1,1,1h1.1v2.1c0,0.6,0.4,1,1,1h11.7c0.6,0,1-0.4,1-1v-2.1h1.1c0.6,0,1-0.4,1-1V8.2C20.3,7.6,19.9,7.2,19.3,7.2z M10.8,9.1c-0.6,0-1-0.4-1-1s0.4-1,1-1s1,0.4,1,1S11.4,9.1,10.8,9.1z M15.2,10.1v2.1H8.7v-2.1H15.2z" />
+    <path d="M20 35h60v40H20V35z M20 35v20h25V35H20z M15 70h70v15H15V70z M20 85h60v5H20V85z" />
+    <rect x="22" y="55" width="4" height="10" />
+    <rect x="23" y="65" width="2" height="5" />
+    <rect x="55" y="20" width="10" height="15" />
+    <rect x="70" y="20" width="10" height="15" />
+    <circle cx="70" cy="45" r="5" />
+    <circle cx="70" cy="60" r="5" />
   </svg>
 );
 
@@ -93,6 +99,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/machines', label: 'Machines', icon: SewingMachineIcon },
+    { href: '/production/new', label: 'New', icon: Plus, isAction: true },
     { href: '/entries', label: 'Entries', icon: ClipboardList },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
@@ -162,12 +169,28 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
             </header>
             <main className="flex-1 p-4 pb-32">{children}</main>
             <nav className="no-print fixed bottom-6 left-6 right-6 z-50 rounded-[2.5rem] border-none liquid-glass">
-              <div className="grid grid-cols-4 h-20">
+              <div className="grid grid-cols-5 h-20">
                 {navItems.map((item) => {
                   const isActive =
                     (item.href === '/dashboard' && pathname === item.href) ||
                     (item.href !== '/dashboard' &&
                       pathname.startsWith(item.href));
+                  
+                  if (item.isAction) {
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="flex flex-col items-center justify-center gap-1 p-1"
+                      >
+                        <div className="bg-primary text-primary-foreground p-3 rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-background/50 backdrop-blur-xl transition-transform active:scale-90">
+                          <item.icon className="h-6 w-6" />
+                        </div>
+                        <span className="text-[10px] font-black uppercase tracking-widest mt-1 text-primary">{item.label}</span>
+                      </Link>
+                    );
+                  }
+
                   return (
                     <Link
                       key={item.href}
