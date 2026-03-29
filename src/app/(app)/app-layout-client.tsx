@@ -9,8 +9,10 @@ import {
   ClipboardList,
   LogOut,
   Settings,
+  X,
 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
+import { motion, AnimatePresence } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 import {
@@ -36,6 +38,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Logo } from '@/components/logo';
 import { MachinesProvider } from '@/context/machines-context';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -67,6 +70,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const [hasMounted, setHasMounted] = React.useState(false);
   const [showGuestLogoutAlert, setShowGuestLogoutAlert] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     setHasMounted(true);
@@ -165,50 +169,88 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
             <header className="no-print flex h-20 items-center gap-4 border-none liquid-glass px-6 sticky top-4 z-50 mx-4 rounded-[2rem]">
               <Logo />
               <div className="flex-1" />
+              {user && (
+                <div className="flex items-center gap-3 bg-white/40 px-3 py-1.5 rounded-full border border-white/60">
+                  <div className="hidden sm:flex flex-col items-end">
+                    <span className="text-[10px] font-bold text-foreground/70 truncate max-w-[120px]">
+                      {user.email}
+                    </span>
+                  </div>
+                  <Avatar className="h-8 w-8 border-2 border-primary/20">
+                    <AvatarImage src={user.photoURL || ''} alt={user.email || ''} />
+                    <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                      {user.email?.substring(0, 2).toUpperCase() || '??'}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              )}
               {logoutButton}
             </header>
             <main className="flex-1 p-4 pb-32">{children}</main>
-            <nav className="no-print fixed bottom-6 left-6 right-6 z-50 rounded-[2.5rem] border-none liquid-glass">
-              <div className="grid grid-cols-5 h-20">
-                {navItems.map((item) => {
-                  const isActive =
-                    (item.href === '/dashboard' && pathname === item.href) ||
-                    (item.href !== '/dashboard' &&
-                      pathname.startsWith(item.href));
-                  
-                  if (item.isAction) {
-                    return (
-                      <Link
+            
+            {/* Mobile Expandable FAB Menu */}
+            <div className="no-print fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-4">
+              <AnimatePresence>
+                {isMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.5, y: 20 }}
+                    className="flex flex-col items-end gap-3 mb-2"
+                  >
+                    {navItems.map((item, index) => (
+                      <motion.div
                         key={item.href}
-                        href={item.href}
-                        className="flex flex-col items-center justify-center gap-1 p-1"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
                       >
-                        <div className="bg-primary text-primary-foreground p-3 rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-background/50 backdrop-blur-xl transition-transform active:scale-90">
-                          <item.icon className="h-6 w-6" />
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest mt-1 text-primary">{item.label}</span>
-                      </Link>
-                    );
-                  }
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsMenuOpen(false)}
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl backdrop-blur-xl border transition-all duration-300",
+                            pathname.startsWith(item.href)
+                              ? "bg-primary text-primary-foreground border-primary/50"
+                              : "bg-white/80 text-foreground border-white/60 hover:bg-white"
+                          )}
+                        >
+                          <span className="text-xs font-bold uppercase tracking-widest">{item.label}</span>
+                          <item.icon className="h-5 w-5" />
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        'flex flex-col items-center justify-center gap-1 p-1 text-xs font-medium transition-colors',
-                        isActive
-                          ? 'text-primary'
-                          : 'text-muted-foreground hover:text-foreground'
-                      )}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </nav>
+              <motion.button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={cn(
+                  "h-16 w-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 border-4 border-white/40 backdrop-blur-xl",
+                  isMenuOpen 
+                    ? "bg-foreground text-background rotate-90" 
+                    : "bg-primary text-primary-foreground"
+                )}
+              >
+                {isMenuOpen ? <X className="h-8 w-8" /> : <Plus className="h-8 w-8" />}
+              </motion.button>
+            </div>
+
+            {/* Backdrop for mobile menu */}
+            <AnimatePresence>
+              {isMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[90]"
+                />
+              )}
+            </AnimatePresence>
           </div>
         ) : (
           <SidebarProvider>
@@ -247,6 +289,26 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
               </SidebarContent>
               <SidebarFooter className="p-4">
                 <SidebarMenu>
+                  {user && (
+                    <SidebarMenuItem className="px-2 pb-4">
+                      <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/40 border border-white/60">
+                        <Avatar className="h-9 w-9 border-2 border-primary/20">
+                          <AvatarImage src={user.photoURL || ''} alt={user.email || ''} />
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                            {user.email?.substring(0, 2).toUpperCase() || '??'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col overflow-hidden">
+                          <span className="text-xs font-bold text-foreground truncate">
+                            {user.email?.split('@')[0]}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground truncate">
+                            {user.email}
+                          </span>
+                        </div>
+                      </div>
+                    </SidebarMenuItem>
+                  )}
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       onClick={handleLogout}
