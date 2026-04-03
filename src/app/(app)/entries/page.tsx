@@ -543,7 +543,7 @@ export default function EntriesPage() {
   };
 
   const handleShareToWhatsApp = (date: string, machinesOnDate: GroupedEntries[string]) => {
-    let report = `*Production Report - \n📅${format(new Date(date), 'eeee, MMM do, yyyy')}*\n`;
+    let report = `Production Report -\n📅${format(new Date(date), 'eeee, MMM do, yyyy')}\n`;
     const separator = `🎰🎰🎰🎰🎰🎰🎰🎰🎰🎰🎰\n`;
     
     report += separator;
@@ -556,7 +556,7 @@ export default function EntriesPage() {
       })
       .forEach(([machineId, shifts]) => {
         const machine = machines.find(m => m.id === machineId);
-        report += `*Machine: ${machineId} ${machine ? `(${machine.model})` : ''}*\n`;
+        report += `Machine: ${machineId} ${machine ? `(${machine.model})` : ''}\n`;
 
         const dayEntries = shifts.day;
         const nightEntries = shifts.night;
@@ -566,23 +566,29 @@ export default function EntriesPage() {
           const day = dayEntries[i];
           const night = nightEntries[i];
 
-          // Header Row
-          report += ` *DAY SHIFT*            *NIGHT SHIFT*\n`;
+          // Shift Header
+          report += `DAY SHIFT       NIGHT SHIFT\n`;
           
-          // Karigar Row
-          const dayKarigar = day ? `Karigar: ${day.karigarName}` : '';
-          const nightKarigar = night ? `Karigar: ${night.karigarName}` : '';
-          report += ` ${dayKarigar.padEnd(22)} ${nightKarigar}\n`;
+          // Karigar Label
+          report += `Karigar ⬇️       Karigar ⬇️\n`;
+          
+          // Karigar Names
+          const dayKarigar = day ? day.karigarName : '';
+          const nightKarigar = night ? night.karigarName : '';
+          report += `  ${dayKarigar.padEnd(17)} ${nightKarigar}\n`;
 
           // Frame Row
           const dayFrame = day ? `Frame: ${day.frame}` : '';
           const nightFrame = night ? `Frame: ${night.frame}` : '';
-          report += ` ${dayFrame.padEnd(22)} ${nightFrame}\n`;
+          report += `${dayFrame.padEnd(18)} ${nightFrame}\n`;
 
-          // Total Tich Row
-          const dayTich = day ? `Total Tich: ${day.totalTich.toLocaleString()}` : '';
-          const nightTich = night ? `Total Tich: ${night.totalTich.toLocaleString()}` : '';
-          report += ` ${dayTich.padEnd(22)} ${nightTich}\n`;
+          // Total Tich Label
+          report += `Total Tich        Total Tich\n`;
+          
+          // Total Tich Values
+          const dayTich = day ? day.totalTich.toLocaleString() : '';
+          const nightTich = night ? night.totalTich.toLocaleString() : '';
+          report += `  ${dayTich.padEnd(17)} ${nightTich}\n`;
           
           if (i < maxEntries - 1) report += `\n`;
         }
