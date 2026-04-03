@@ -607,30 +607,6 @@ export default function EntriesPage() {
   
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="Production Entries" className="no-print">
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Button asChild variant="glass" className="hidden sm:flex px-4">
-            <Link href="/production/new">
-              <Plus className="mr-2 h-4 w-4" />
-              <span>New Entry</span>
-            </Link>
-          </Button>
-          <Button
-            variant={isFilterMenuOpen ? 'secondary' : 'outline'}
-            onClick={() => setIsFilterMenuOpen(!isFilterMenuOpen)}
-            className="relative flex-1 sm:flex-none px-4"
-          >
-            <Filter className="mr-2 h-4 w-4" />
-            <span>Filter</span>
-            {isFiltered && !isFilterMenuOpen && (
-              <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-              </span>
-            )}
-          </Button>
-        </div>
-      </PageHeader>
       
       <Collapsible open={isFilterMenuOpen}>
         <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
@@ -760,7 +736,7 @@ export default function EntriesPage() {
                   <div className="flex items-center gap-3 no-print z-10">
                     <Tooltip>
                       <TooltipTrigger asChild>
-                          <Button size="lg" className="rounded-full bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 shadow-lg hover:bg-[#25D366] hover:text-white hover:shadow-xl hover:shadow-[#25D366]/20 hover:-translate-y-1 transform transition-all duration-300 font-bold px-6" onClick={(e) => { e.stopPropagation(); handleShareToWhatsApp(date, machinesOnDate); }}>
+                          <Button size="lg" className="rounded-full bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/20 shadow-lg hover:bg-[#25D366] hover:text-white hover:shadow-xl hover:shadow-[#25D366]/20 hover:-translate-y-1 transform transition-all duration-300 font-bold px-6 animate-pulse-glow" onClick={(e) => { e.stopPropagation(); handleShareToWhatsApp(date, machinesOnDate); }}>
                              <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-5 w-5 mr-2">
                                 <title>WhatsApp</title>
                                 <path d="M12.04 2.015c-5.52 0-9.994 4.475-9.994 9.995 0 1.88.523 3.633 1.43 5.144L2 22l5.05-1.378a9.92 9.92 0 0 0 4.99 1.362h.002c5.52 0 9.995-4.476 9.995-9.995s-4.475-9.996-9.995-9.996zM17.473 14.383c-.297-.149-1.758-.867-2.03-.967-.273-.1-.47-.148-.67.15-.196.297-.767.966-.94 1.164-.172.199-.346.223-.644.074-.297-.15-1.254-.463-2.39-1.475-.883-.788-1.48-1.76-1.652-2.058-.173-.297-.018-.458.13-.606.135-.133.297-.347.446-.52.149-.174.198-.298.298-.497.1-.198.05-.371-.025-.52s-.67-.816-.917-1.114c-.247-.298-.495-.255-.67-.255-.172 0-.37.025-.52.025-.148 0-.37.074-.568.371-.198.298-.768.967-.768 2.352 0 1.385.792 2.733.916 2.93.124.198 1.58 2.52 3.824 3.537.533.249.94.398 1.267.507.506.171.95.147 1.305.09.43-.07 1.255-.513 1.428-.988.173-.474.173-.881.124-1.024-.05-.147-.172-.222-.37-.37z"/>

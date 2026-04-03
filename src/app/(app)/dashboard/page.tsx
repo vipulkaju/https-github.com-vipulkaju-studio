@@ -228,8 +228,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title="Dashboard" />
-
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 space-y-6">
           <section className="space-y-4">
