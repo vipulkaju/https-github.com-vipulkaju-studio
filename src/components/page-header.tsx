@@ -10,7 +10,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, children, className }: PageHeaderProps) {
   return (
-    <div className={cn("flex flex-col sm:flex-row min-h-24 sm:items-center justify-between gap-4 px-6 sm:px-8 py-6 liquid-glass rounded-[2.5rem] mb-6 shadow-sm border-white/80", className)}>
+    <div className={cn("flex flex-col sm:flex-row min-h-20 sm:items-center justify-between gap-4 px-6 sm:px-8 py-4 liquid-glass rounded-[2rem] mb-4 shadow-sm border-white/80", className)}>
       <div className="flex flex-col gap-1">
         <h1 className="font-headline text-2xl font-black tracking-tight md:text-4xl text-foreground/90">
           {title}

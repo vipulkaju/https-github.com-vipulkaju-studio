@@ -33,7 +33,7 @@ export default function NewProductionPage() {
             </div>
           </div>
           <p className="text-muted-foreground text-xs sm:text-xl font-medium sm:ml-[5.5rem] max-w-2xl px-1">
-            Record today&apos;s production details accurately.
+            Record production details accurately.
           </p>
         </div>
 

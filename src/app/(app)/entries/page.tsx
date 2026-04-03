@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMemo, useState, useEffect } from 'react';
-import { format, parse } from 'date-fns';
+import { format, parse, startOfDay, endOfDay } from 'date-fns';
 import {
   Calendar as CalendarIcon,
   Hash,
@@ -467,7 +467,7 @@ type GroupedEntries = {
 };
 
 export default function EntriesPage() {
-  const { machines, allProductionEntries, deleteProductionEntry, updateProductionEntry } = useMachines();
+  const { machines, allProductionEntries, deleteProductionEntry, updateProductionEntry, bulkDeleteEntries } = useMachines();
   const [selectedMachines, setSelectedMachines] = useState<string[]>([]);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [editingEntry, setEditingEntry] = useState<ProductionEntry | null>(null);
@@ -543,7 +543,10 @@ export default function EntriesPage() {
   };
 
   const handleShareToWhatsApp = (date: string, machinesOnDate: GroupedEntries[string]) => {
-    let report = `*Production Report - ${format(new Date(date), 'eeee, MMM do, yyyy')}*\n\n`;
+    let report = `*Production Report - \n📅${format(new Date(date), 'eeee, MMM do, yyyy')}*\n`;
+    const separator = `🎰🎰🎰🎰🎰🎰🎰🎰🎰🎰🎰\n`;
+    
+    report += separator;
 
     Object.entries(machinesOnDate)
       .sort((a, b) => {
@@ -555,28 +558,36 @@ export default function EntriesPage() {
         const machine = machines.find(m => m.id === machineId);
         report += `*Machine: ${machineId} ${machine ? `(${machine.model})` : ''}*\n`;
 
-        if (shifts.day.length > 0) {
-          report += `\n*DAY SHIFT*\n`;
-          shifts.day.forEach(entry => {
-            report += `--------------------\n`;
-            report += `Design: *${entry.designName}*\n`;
-            report += `Karigar: ${entry.karigarName}\n`;
-            report += `Frame: ${entry.frame} | Meter: ${entry.totalMeter}m\n`;
-            report += `Total Tich: ${entry.totalTich.toLocaleString()}\n`;
-          });
-        }
+        const dayEntries = shifts.day;
+        const nightEntries = shifts.night;
+        const maxEntries = Math.max(dayEntries.length, nightEntries.length);
 
-        if (shifts.night.length > 0) {
-          report += `\n*NIGHT SHIFT*\n`;
-          shifts.night.forEach(entry => {
-            report += `--------------------\n`;
-            report += `Design: *${entry.designName}*\n`;
-            report += `Karigar: ${entry.karigarName}\n`;
-            report += `Frame: ${entry.frame} | Meter: ${entry.totalMeter}m\n`;
-            report += `Total Tich: ${entry.totalTich.toLocaleString()}\n`;
-          });
+        for (let i = 0; i < maxEntries; i++) {
+          const day = dayEntries[i];
+          const night = nightEntries[i];
+
+          // Header Row
+          report += ` *DAY SHIFT*            *NIGHT SHIFT*\n`;
+          
+          // Karigar Row
+          const dayKarigar = day ? `Karigar: ${day.karigarName}` : '';
+          const nightKarigar = night ? `Karigar: ${night.karigarName}` : '';
+          report += ` ${dayKarigar.padEnd(22)} ${nightKarigar}\n`;
+
+          // Frame Row
+          const dayFrame = day ? `Frame: ${day.frame}` : '';
+          const nightFrame = night ? `Frame: ${night.frame}` : '';
+          report += ` ${dayFrame.padEnd(22)} ${nightFrame}\n`;
+
+          // Total Tich Row
+          const dayTich = day ? `Total Tich: ${day.totalTich.toLocaleString()}` : '';
+          const nightTich = night ? `Total Tich: ${night.totalTich.toLocaleString()}` : '';
+          report += ` ${dayTich.padEnd(22)} ${nightTich}\n`;
+          
+          if (i < maxEntries - 1) report += `\n`;
         }
-        report += `\n`;
+        
+        report += separator;
       });
 
     const encodedReport = encodeURIComponent(report);

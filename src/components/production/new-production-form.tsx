@@ -3,12 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { 
   CalendarIcon, Zap, User, 
   ChevronRight, ChevronLeft, Target, Ruler,
   Layers, Cpu, Plus
 } from 'lucide-react';
+import { Machine, Karigar, ProductionEntry } from '@/lib/types';
 import { useState, useEffect } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -45,6 +46,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { motion, AnimatePresence } from 'motion/react';
+import confetti from 'canvas-confetti';
 
 // Form validation schema
 const productionEntrySchema = z.object({
@@ -61,32 +63,23 @@ const productionEntrySchema = z.object({
 
 type ProductionEntryFormValues = z.infer<typeof productionEntrySchema>;
 
-interface Machine {
-  id: string;
-  model: number;
-  capacityUnitsPerHour: number;
-}
-
-interface Karigar {
-  id: string;
-  name: string;
-}
-
 interface NewProductionFormProps {
   machines: Machine[];
   karigars: Karigar[];
+  allProductionEntries: ProductionEntry[];
   onAddEntry: (entry: ProductionEntryFormValues) => void;
   addMachine: (data: { id: string; model: number; capacityUnitsPerHour: number }) => void;
   addKarigar: (name: string) => void;
 }
 
-export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, addKarigar }: NewProductionFormProps) {
+export function NewProductionForm({ machines, karigars, allProductionEntries, onAddEntry, addMachine, addKarigar }: NewProductionFormProps) {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   
   // Dialog states
   const [isAddMachineOpen, setIsAddMachineOpen] = useState(false);
   const [isAddKarigarOpen, setIsAddKarigarOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   
   // New Machine Form State
   const [newMachineId, setNewMachineId] = useState('');
@@ -99,7 +92,7 @@ export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, 
   const form = useForm<ProductionEntryFormValues>({
     resolver: zodResolver(productionEntrySchema),
     defaultValues: {
-      date: new Date(),
+      date: subDays(new Date(), 1),
       shift: 'day',
       machineId: '',
       karigarName: '',
@@ -125,6 +118,35 @@ export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, 
     }
   }, [watchedValues.machineId, watchedValues.frame, watchedValues.designTich, machines, form]);
 
+  // Auto-selection logic based on last entry
+  useEffect(() => {
+    if (watchedValues.machineId && watchedValues.shift && allProductionEntries.length > 0) {
+      // Find the most recent entry for this machine and shift
+      const machineEntries = [...allProductionEntries]
+        .filter(entry => 
+          entry.machineId === watchedValues.machineId && 
+          entry.shift === watchedValues.shift
+        )
+        .sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          if (dateA !== dateB) return dateB - dateA;
+          // If same date, use createdAt to get the absolute last entry
+          const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return timeB - timeA;
+        });
+
+      if (machineEntries.length > 0) {
+        const lastEntry = machineEntries[0];
+        // Auto-fill fields from the last entry
+        form.setValue('karigarName', lastEntry.karigarName);
+        form.setValue('designName', lastEntry.designName);
+        form.setValue('designTich', lastEntry.designTich);
+      }
+    }
+  }, [watchedValues.machineId, watchedValues.shift, allProductionEntries, form]);
+
   const nextStep = async () => {
     const stepFields = [
       ['date', 'shift'], 
@@ -137,10 +159,45 @@ export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, 
   };
 
   const onSubmit = (data: ProductionEntryFormValues) => {
+    // Validation: Check if entry already exists for this date, machine, and shift
+    const dateStr = format(data.date, 'yyyy-MM-dd');
+    const existingEntry = allProductionEntries.find(
+      (entry) => 
+        entry.date === dateStr && 
+        entry.machineId === data.machineId && 
+        entry.shift === data.shift
+    );
+
+    if (existingEntry) {
+      toast({
+        variant: 'destructive',
+        title: "Entry Already Exists",
+        description: `An entry for Machine ${data.machineId} in the ${data.shift} shift on ${format(data.date, 'PPP')} already exists.`,
+      });
+      return;
+    }
+
     onAddEntry(data);
+    
+    // Success Animation
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#f97316', '#fb923c', '#fdba74', '#ffffff']
+    });
+
     toast({ title: "Success!", description: "Entry saved successfully." });
     setCurrentStep(0);
-    form.reset();
+    form.reset({
+      ...form.getValues(),
+      karigarName: '',
+      designName: '',
+      designTich: 0,
+      totalTich: 0,
+      frame: 0,
+      totalMeter: 0,
+    });
   };
 
   return (
@@ -195,7 +252,7 @@ export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, 
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel className="text-[10px] sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Production Date</FormLabel>
-                            <Popover>
+                            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                               <PopoverTrigger asChild>
                                 <Button variant="outline" className="h-12 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-medium text-base sm:text-lg bg-slate-50/50 justify-start px-4 sm:px-5 hover:bg-white transition-all">
                                   <CalendarIcon className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
@@ -203,7 +260,15 @@ export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, 
                                 </Button>
                               </PopoverTrigger>
                               <PopoverContent className="rounded-3xl p-0 shadow-2xl border-none" align="center">
-                                <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                                <Calendar 
+                                  mode="single" 
+                                  selected={field.value} 
+                                  onSelect={(date) => {
+                                    field.onChange(date);
+                                    setIsCalendarOpen(false);
+                                  }} 
+                                  initialFocus 
+                                />
                               </PopoverContent>
                             </Popover>
                             <FormMessage />
@@ -267,7 +332,7 @@ export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, 
                                   <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                                 </Button>
                               </div>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select onValueChange={field.onChange} value={field.value}>
                                 <SelectTrigger className="h-12 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 bg-slate-50/50 font-semibold text-base sm:text-lg">
                                   <div className="flex items-center gap-2">
                                     <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
@@ -305,7 +370,7 @@ export function NewProductionForm({ machines, karigars, onAddEntry, addMachine, 
                                   <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                                 </Button>
                               </div>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select onValueChange={field.onChange} value={field.value}>
                                 <SelectTrigger className="h-12 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 bg-slate-50/50 font-semibold text-base sm:text-lg">
                                   <div className="flex items-center gap-2">
                                     <User className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />

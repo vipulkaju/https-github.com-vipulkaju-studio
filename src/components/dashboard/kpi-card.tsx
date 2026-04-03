@@ -13,16 +13,16 @@ interface KpiCardProps {
 
 export function KpiCard({ title, icon: Icon, className, onClick, href }: KpiCardProps) {
   const content = (
-     <div className="flex flex-col items-center justify-center text-center gap-4 p-6 h-full relative z-10">
-        <div className="bg-primary/10 p-5 rounded-[2rem] group-hover:bg-primary group-hover:text-white transition-all duration-500 animate-float shadow-inner border border-primary/20">
-          <Icon className="h-10 w-10 text-primary group-hover:text-white transition-colors duration-500" />
+     <div className="flex flex-col items-center justify-center text-center gap-2 p-3 h-full relative z-10">
+        <div className="bg-primary/10 p-2.5 rounded-xl group-hover:bg-primary group-hover:text-white transition-all duration-500 animate-float shadow-inner border border-primary/20">
+          <Icon className="h-6 w-6 text-primary group-hover:text-white transition-colors duration-500" />
         </div>
-        <h3 className="text-xs font-black font-headline text-foreground/80 leading-tight uppercase tracking-widest">{title}</h3>
+        <h3 className="text-[9px] font-black font-headline text-foreground/80 leading-tight uppercase tracking-widest">{title}</h3>
     </div>
   );
 
   const cardClasses = cn(
-    "glass-card group aspect-square flex flex-col items-center justify-center relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2",
+    "glass-card group min-h-[110px] flex flex-col items-center justify-center relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1",
     className,
     !onClick && !href ? "cursor-default" : ""
   );

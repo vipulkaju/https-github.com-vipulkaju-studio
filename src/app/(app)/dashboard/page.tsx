@@ -227,19 +227,19 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <PageHeader title="Dashboard" />
 
-      <div className="flex flex-col lg:flex-row gap-10">
-        <div className="flex-1 space-y-10">
-          <section className="space-y-6">
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1 space-y-6">
+          <section className="space-y-4">
             <div className="flex items-center justify-between px-2">
-              <h2 className="text-2xl font-bold font-headline tracking-tight text-foreground/90">Overview</h2>
+              <h2 className="text-xl font-bold font-headline tracking-tight text-foreground/90">Overview</h2>
               <div className="text-xs font-bold text-primary/60 bg-primary/5 px-4 py-1.5 rounded-full backdrop-blur-md border border-primary/10">
                 Live Status
               </div>
             </div>
-            <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
               <KpiCard
                 title="Yesterday's Status"
                 icon={SewingMachineIcon}
@@ -289,76 +289,37 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section className="space-y-6">
+          <section className="space-y-4">
             <div className="flex items-center justify-between px-2">
-              <h2 className="text-2xl font-bold font-headline tracking-tight text-foreground/90">Production Trends</h2>
+              <h2 className="text-xl font-bold font-headline tracking-tight text-foreground/90">Production Trends</h2>
               <div className="flex items-center gap-2 bg-white/10 p-1 rounded-xl border border-white/20">
-                <Button variant="ghost" size="sm" className="rounded-lg h-8 text-[10px] font-bold uppercase tracking-wider">7 Days</Button>
-                <Button variant="ghost" size="sm" className="rounded-lg h-8 text-[10px] font-bold uppercase tracking-wider opacity-50">30 Days</Button>
+                <Button variant="ghost" size="sm" className="rounded-lg h-7 text-[10px] font-bold uppercase tracking-wider">7 Days</Button>
+                <Button variant="ghost" size="sm" className="rounded-lg h-7 text-[10px] font-bold uppercase tracking-wider opacity-50">30 Days</Button>
               </div>
             </div>
-            <div className="glass-card p-8">
+            <div className="glass-card p-6">
               <WeeklyPerformanceChart entries={allProductionEntries} />
             </div>
           </section>
         </div>
 
-        <aside className="w-full lg:w-96 space-y-10">
-          <section className="space-y-6">
-            <h2 className="text-2xl font-bold font-headline tracking-tight text-foreground/90">Quick Actions</h2>
-            <div className="grid grid-cols-1 gap-4">
-              <Link href="/production/new" className="group">
-                <div className="liquid-glass p-6 rounded-[2.5rem] flex items-center gap-4 transition-all duration-500 group-hover:bg-white/40 group-hover:-translate-y-2 group-hover:shadow-2xl border-white/20">
-                  <div className="bg-primary/10 p-4 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
-                    <Plus className="h-7 w-7" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl font-headline tracking-tight">New Entry</h3>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Add production record</p>
-                  </div>
-                </div>
-              </Link>
-              <Link href="/machines" className="group">
-                <div className="liquid-glass p-6 rounded-[2.5rem] flex items-center gap-4 transition-all duration-500 group-hover:bg-white/40 group-hover:-translate-y-2 group-hover:shadow-2xl border-white/20">
-                  <div className="bg-blue-500/10 p-4 rounded-2xl text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 shadow-inner">
-                    <SewingMachineIcon className="h-7 w-7" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl font-headline tracking-tight">Machines</h3>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Manage equipment</p>
-                  </div>
-                </div>
-              </Link>
-              <Link href="/entries" className="group">
-                <div className="liquid-glass p-6 rounded-[2.5rem] flex items-center gap-4 transition-all duration-500 group-hover:bg-white/40 group-hover:-translate-y-2 group-hover:shadow-2xl border-white/20">
-                  <div className="bg-emerald-500/10 p-4 rounded-2xl text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500 shadow-inner">
-                    <ClipboardList className="h-7 w-7" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl font-headline tracking-tight">History</h3>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">View past entries</p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </section>
-
-          <section className="space-y-6">
-            <h2 className="text-2xl font-bold font-headline tracking-tight text-foreground/90">Recent Activity</h2>
-            <div className="liquid-glass p-8 rounded-[3rem] space-y-8 relative overflow-hidden">
+        <aside className="w-full lg:w-96 space-y-6">
+          <section className="space-y-4">
+            <h2 className="text-xl font-bold font-headline tracking-tight text-foreground/90">Recent Activity</h2>
+            <div className="liquid-glass p-6 rounded-[2rem] space-y-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-12 -mt-12" />
               {allProductionEntries.slice(0, 5).map((entry, i) => (
-                <div key={entry.id} className="flex items-start gap-5 relative group">
-                  {i !== 4 && <div className="absolute left-[1.375rem] top-12 bottom-[-2rem] w-0.5 bg-primary/10 group-hover:bg-primary/20 transition-colors" />}
-                  <div className="bg-primary/10 p-2.5 rounded-full mt-1 border border-primary/20 group-hover:scale-110 transition-transform">
-                    <div className="h-3 w-3 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
+                <div key={entry.id} className="flex items-start gap-4 relative group">
+                  {i !== 4 && <div className="absolute left-[1.125rem] top-10 bottom-[-1.5rem] w-0.5 bg-primary/10 group-hover:bg-primary/20 transition-colors" />}
+                  <div className="bg-primary/10 p-2 rounded-full mt-1 border border-primary/20 group-hover:scale-110 transition-transform">
+                    <div className="h-2.5 w-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-bold text-base leading-none tracking-tight">{entry.karigarName}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-sm leading-none tracking-tight">{entry.karigarName}</p>
+                    <p className="text-[11px] text-muted-foreground">
                       Added entry for <span className="font-bold text-foreground">{entry.machineId}</span>
                     </p>
-                    <p className="text-[10px] text-primary/60 uppercase font-black tracking-widest">
+                    <p className="text-[9px] text-primary/60 uppercase font-black tracking-widest">
                       {format(new Date(entry.date), 'MMM d')} • {entry.shift}
                     </p>
                   </div>
@@ -377,13 +338,13 @@ export default function DashboardPage() {
         </aside>
       </div>
        <Dialog open={!!dialogData} onOpenChange={(open) => !open && setDialogData(null)}>
-        <DialogContent className="liquid-glass border-white/20 p-8 rounded-[3rem]">
+        <DialogContent className="liquid-glass border-white/20 p-6 rounded-[2rem]">
           <DialogHeader>
              <div className="flex items-center gap-4 mb-2">
-                {dialogData && <div className="bg-primary/10 p-3 rounded-xl"><dialogData.icon className="h-6 w-6 text-primary" /></div>}
+                {dialogData && <div className="bg-primary/10 p-2.5 rounded-xl"><dialogData.icon className="h-5 w-5 text-primary" /></div>}
                 <div>
-                    <DialogTitle>{dialogData?.title}</DialogTitle>
-                    <DialogDescription>{dialogData?.description}</DialogDescription>
+                    <DialogTitle className="text-lg">{dialogData?.title}</DialogTitle>
+                    <DialogDescription className="text-xs">{dialogData?.description}</DialogDescription>
                 </div>
             </div>
           </DialogHeader>
@@ -391,13 +352,13 @@ export default function DashboardPage() {
         </DialogContent>
       </Dialog>
       <Dialog open={isStatusDialogOpen} onOpenChange={setStatusDialogOpen}>
-        <DialogContent className="liquid-glass border-white/20 p-8 rounded-[3rem] max-w-2xl">
+        <DialogContent className="liquid-glass border-white/20 p-6 rounded-[2rem] max-w-2xl">
           <DialogHeader>
              <div className="flex items-center gap-4 mb-2">
-                <div className="bg-primary/10 p-3 rounded-xl"><SewingMachineIcon className="h-6 w-6 text-primary" /></div>
+                <div className="bg-primary/10 p-2.5 rounded-xl"><SewingMachineIcon className="h-5 w-5 text-primary" /></div>
                 <div>
-                    <DialogTitle>Yesterday&apos;s Entry Status</DialogTitle>
-                    <DialogDescription>Color indicates production entry status for yesterday.</DialogDescription>
+                    <DialogTitle className="text-lg">Yesterday&apos;s Entry Status</DialogTitle>
+                    <DialogDescription className="text-xs">Color indicates production entry status for yesterday.</DialogDescription>
                 </div>
             </div>
           </DialogHeader>
